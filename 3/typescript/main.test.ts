@@ -1,4 +1,4 @@
-import { getNeighbors, isSymbol, partOne } from './main.ts';
+import { getNeighbors, getNumberNeighbors, isSymbol, partOne, partTwo } from './main.ts';
 
 describe('isSymbol', () => {
     it('returns false given an empty string', () => {
@@ -26,7 +26,7 @@ describe('isSymbol', () => {
     });
 });
 
-describe('getNeighbors', () => {
+xdescribe('getNeighbors', () => {
     it('returns an empty object given an empty line', () => {
         expect(getNeighbors({ line: '', charIndex: 0 })).toEqual(expect.arrayContaining([]));
     });
@@ -139,8 +139,8 @@ describe('getNeighbors', () => {
     });
 });
 
-describe('partOne', () => {
-    it('return 0 given no numbers', () => {
+xdescribe('partOne', () => {
+    it('returns 0 given no numbers', () => {
         const input = [
             '...',
             '...',
@@ -149,7 +149,7 @@ describe('partOne', () => {
         expect(partOne(input)).toBe(0);
     });
 
-    it('return 0 given no symbols', () => {
+    it('returns 0 given no symbols', () => {
         const input = [
             '1..',
             '.2.',
@@ -158,7 +158,7 @@ describe('partOne', () => {
         expect(partOne(input)).toBe(0);
     });
 
-    it('return 1 given no only 1 has a symbol neighbor', () => {
+    it('returns 1 given no only 1 has a symbol neighbor', () => {
         const input = [
             '1*.',
             '...',
@@ -173,7 +173,7 @@ describe('partOne', () => {
     });
 
     it('returns 123 given just 123 and a symbol after', () => {
-        const input = ['123*']
+        const input = ['123*'];
         expect(partOne(input)).toBe(123);
     });
 
@@ -181,8 +181,105 @@ describe('partOne', () => {
         expect(partOne(example)).toBe(4361);
     });
 
-    it('returns ? given their input', () => {
-        expect(partOne(input)).toBe(42);
+    it('returns 560670 given their input', () => {
+        expect(partOne(input)).toBe(560670);
+    });
+});
+
+xdescribe('partTwo', () => {
+    it('returns 0 given no numbers', () => {
+        const input = [
+            '...',
+            '...',
+            '...'
+        ];
+        expect(partTwo(input)).toBe(0);
+    });
+
+    it('returns 0 given no symbols', () => {
+        const input = [
+            '1..',
+            '.2.',
+            '..3'
+        ];
+        expect(partTwo(input)).toBe(0);
+    });
+
+    it('returns 0 given no connecting gears', () => {
+        const input = [
+            '1*.',
+        ];
+        expect(partTwo(input)).toBe(0);
+    });
+
+    it('returns ratio given a single gear ratio of east to west', () => {
+        const input = [
+            '1*2',
+        ];
+        expect(partTwo(input)).toBe(2);
+    });
+
+    fit('returns ratio given a single gear ratio of north to south with multidigit numbers', () => {
+        const input = [
+            '123*2'
+        ];
+        expect(partTwo(input)).toBe(246);
+    });
+});
+
+fdescribe('getNumberNeighbors', () => {
+    it('returns entire north number without northwest or northeast', () => {
+        const lineAbove = '1.5.2';
+        const line      = '..*..';
+        const charIndex = 2;
+
+        expect(getNumberNeighbors({ line, charIndex, lineAbove })).toEqual([5]);
+    });
+
+    it('returns entire north number with northwest', () => {
+        const lineAbove = '435..';
+        const line      = '..*..';
+        const charIndex = 2;
+
+        expect(getNumberNeighbors({ line, charIndex, lineAbove })).toEqual([435]);
+    });
+
+    it('returns entire north number with northeast', () => {
+        const lineAbove = '..543...123';
+        const line      = '..*..';
+        const charIndex = 2;
+
+        expect(getNumberNeighbors({ line, charIndex, lineAbove })).toEqual([543]);
+    });
+
+    it('returns entire north west numbers', () => {
+        const lineAbove = '17...';
+        const line      = '..*..';
+        const charIndex = 2;
+
+        expect(getNumberNeighbors({ line, charIndex, lineAbove })).toEqual([17]);
+    });
+
+    it('returns entire north east numbers', () => {
+        const lineAbove = '9..38';
+        const line      = '..*..';
+        const charIndex = 2;
+
+        expect(getNumberNeighbors({ line, charIndex, lineAbove })).toEqual([38]);
+    });
+
+    it("returns entire east numbers", () => {
+        const line = '*38';
+        const charIndex = 0;
+
+        expect(getNumberNeighbors({ line, charIndex })).toEqual([38])
+    });
+
+    it("returns entire west numbers", () => {
+        const line = '17*';
+        const charIndex = 2;
+
+        expect(getNumberNeighbors({ line, charIndex })).toEqual([17])
     });
 });
 

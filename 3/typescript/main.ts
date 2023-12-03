@@ -19,14 +19,21 @@ type GetNeighborsParams = {
     lineAbove?: string;
     lineBelow?: string;
 };
+export const getSymbolNeighbors = (params: GetNeighborsParams) => {
+    return getNeighbors(params).filter(isSymbol);
+}
+
 export const getNeighbors = ({
     line,
     charIndex,
     lineAbove,
     lineBelow
-}: GetNeighborsParams) => {
+}: GetNeighborsParams): string[] => {
     if (charIndex >= line.length) return [];
 
+    // TS Can't seem to realize that I'm filtering out undefineds. I think
+    // I need a type guard and I don't want to write one.
+    // @ts-ignore
     return [
         lineAbove?.[charIndex],
         lineBelow?.[charIndex],
@@ -36,32 +43,37 @@ export const getNeighbors = ({
         lineAbove?.[charIndex - 1],
         lineBelow?.[charIndex + 1],
         lineBelow?.[charIndex - 1]
-    ]
-        .filter(n => n !== undefined);
+    ].filter(n => n !== undefined);
 }
 
-const example = [
-    '467..114..',
-    '...*......',
-    '..35..633.',
-    '......#...',
-    '617*......',
-    '.....+.58.',
-    '..592.....',
-    '......755.',
-    '...$.*....',
-    '.664.598..'
-];
+export const partOne = (input: string[]) => {
+    const partList: string[] = [];
 
-const partOne = (input: string[]) => {
-    input.forEach(line => {
+    for (let lineNo = 0; lineNo < input.length; lineNo++) {
         let partNumber = '';
         let includePart = false;
 
-        line.split('').forEach(c => {
-            // console.log(c)
-        });
-    });
-}
+        const line = input[lineNo];
+        line.split('').forEach((c, i) => {
+            const lineAbove = lineNo > 0 ? input[lineNo-1] : undefined;
+            const lineBelow = lineNo < input.length-1 ? input[lineNo+1] : undefined;
 
-// console.log(partOne(example))
+            if (isNum(c)) {
+                partNumber += c;
+                const symbolNeighbors = getSymbolNeighbors({
+                    line, charIndex: i, lineAbove, lineBelow
+                });
+                if (symbolNeighbors.length > 0) {
+                    includePart = true;
+                }
+            } else if (partNumber != '') {
+                if (includePart) partList.push(partNumber);
+                partNumber = '';
+                includePart = false;
+            }
+        });
+        if (includePart) partList.push(partNumber);
+    };
+
+    return partList.reduce((acc, curr) => acc += Number(curr), 0);
+}

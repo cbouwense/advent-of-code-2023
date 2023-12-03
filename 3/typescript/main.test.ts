@@ -1,4 +1,4 @@
-import { getNeighbors, getNumberNeighbors, isSymbol, partOne, partTwo } from './main.ts';
+import { getNumberNeighbors, isSymbol, partOne, partTwo } from './main.ts';
 
 describe('isSymbol', () => {
     it('returns false given an empty string', () => {
@@ -26,208 +26,7 @@ describe('isSymbol', () => {
     });
 });
 
-xdescribe('getNeighbors', () => {
-    it('returns an empty object given an empty line', () => {
-        expect(getNeighbors({ line: '', charIndex: 0 })).toEqual(expect.arrayContaining([]));
-    });
-
-    it('returns all cardinal directions', () => {
-        const lineAbove = 'abc';
-        const line      = 'd1e';
-        const lineBelow = 'fgh';
-        const charIndex = 1;
-
-        expect(getNeighbors({ line, charIndex, lineAbove, lineBelow }))
-            .toEqual(expect.arrayContaining(['b','g','e','d','c','a','h','f']));
-    });
-
-    it('does not return anything north if there is no line above', () => {
-        const line      = 'd1e';
-        const lineBelow = 'fgh';
-        const charIndex = 1;
-
-        expect(getNeighbors({ line, charIndex, lineBelow })).toEqual(expect.arrayContaining([
-            'g',
-            'e',
-            'd',
-            'h',
-            'f',
-        ]));
-    });
-
-    it('does not return anything south if there is no line below', () => {
-        const lineAbove = 'abc';
-        const line      = 'd1e';
-        const charIndex = 1;
-
-        expect(getNeighbors({ line, charIndex, lineAbove })).toEqual(expect.arrayContaining([
-            'b',
-            'e',
-            'd',
-            'c',
-            'a'
-        ]));
-    });
-
-    it('does not return anything east if the char index is at the end of the line', () => {
-        const lineAbove = 'ab';
-        const line      = 'd1';
-        const lineBelow = 'fg';
-        const charIndex = 1;
-
-        expect(getNeighbors({ line, charIndex, lineAbove, lineBelow })).toEqual(expect.arrayContaining([
-            'b',
-            'g',
-            'd',
-            'a',
-            'f',
-        ]));
-    });
-
-    it('does not return anything west if the char index is at the beginning of the line', () => {
-        const lineAbove = 'bc';
-        const line      = '1e';
-        const lineBelow = 'gh';
-        const charIndex = 0;
-
-        expect(getNeighbors({ line, charIndex, lineAbove, lineBelow })).toEqual(expect.arrayContaining([
-            'b',
-            'g',
-            'e',
-            'c',
-            'h',
-        ]));
-    });
-
-    it('returns an empty object given a char index that is longer than the line length', () => {
-        const lineAbove = 'abc';
-        const line      = 'd1e';
-        const lineBelow = 'fgh';
-        const charIndex = 3;
-
-        expect(getNeighbors({ line, charIndex, lineAbove, lineBelow })).toEqual(expect.arrayContaining([]));
-    });
-
-    it('returns the correct neighbors for the first 4 in the example', () => {
-        const line      = '467..114..';
-        const lineBelow = '...*......';
-        const charIndex = 0;
-
-        expect(getNeighbors({ line, charIndex, lineBelow })).toEqual(expect.arrayContaining([
-            '6',
-            '.',
-            '.'
-        ]));
-    });
-
-    it('returns the correct neighbors for the first 4 in the example', () => {
-        const lineAbove = '467..114..';
-        const line      = '...*......';
-        const lineBelow = '..35..633.';
-        const charIndex = 3;
-
-        expect(getNeighbors({ line, charIndex, lineAbove, lineBelow })).toEqual(expect.arrayContaining([
-            '.',
-            '5',
-            '.',
-            '.',
-            '.',
-            '7',
-            '.',
-            '3'
-        ]));
-    });
-});
-
-xdescribe('partOne', () => {
-    it('returns 0 given no numbers', () => {
-        const input = [
-            '...',
-            '...',
-            '...'
-        ];
-        expect(partOne(input)).toBe(0);
-    });
-
-    it('returns 0 given no symbols', () => {
-        const input = [
-            '1..',
-            '.2.',
-            '..3'
-        ];
-        expect(partOne(input)).toBe(0);
-    });
-
-    it('returns 1 given no only 1 has a symbol neighbor', () => {
-        const input = [
-            '1*.',
-            '...',
-            '..3'
-        ];
-        expect(partOne(input)).toBe(1);
-    });
-
-    it('returns 123 given just 123 and a symbol before', () => {
-        const input = ['*123'];
-        expect(partOne(input)).toBe(123);
-    });
-
-    it('returns 123 given just 123 and a symbol after', () => {
-        const input = ['123*'];
-        expect(partOne(input)).toBe(123);
-    });
-
-    it('returns 4361 given their example input', () => {
-        expect(partOne(example)).toBe(4361);
-    });
-
-    it('returns 560670 given their input', () => {
-        expect(partOne(input)).toBe(560670);
-    });
-});
-
-xdescribe('partTwo', () => {
-    it('returns 0 given no numbers', () => {
-        const input = [
-            '...',
-            '...',
-            '...'
-        ];
-        expect(partTwo(input)).toBe(0);
-    });
-
-    it('returns 0 given no symbols', () => {
-        const input = [
-            '1..',
-            '.2.',
-            '..3'
-        ];
-        expect(partTwo(input)).toBe(0);
-    });
-
-    it('returns 0 given no connecting gears', () => {
-        const input = [
-            '1*.',
-        ];
-        expect(partTwo(input)).toBe(0);
-    });
-
-    it('returns ratio given a single gear ratio of east to west', () => {
-        const input = [
-            '1*2',
-        ];
-        expect(partTwo(input)).toBe(2);
-    });
-
-    fit('returns ratio given a single gear ratio of north to south with multidigit numbers', () => {
-        const input = [
-            '123*2'
-        ];
-        expect(partTwo(input)).toBe(246);
-    });
-});
-
-fdescribe('getNumberNeighbors', () => {
+describe('getNumberNeighbors', () => {
     it('returns entire north number without northwest or northeast', () => {
         const lineAbove = '1.5.2';
         const line      = '..*..';
@@ -268,6 +67,46 @@ fdescribe('getNumberNeighbors', () => {
         expect(getNumberNeighbors({ line, charIndex, lineAbove })).toEqual([38]);
     });
 
+    it('returns entire south number without southwest or southeast', () => {
+        const line      = '..*..';
+        const lineBelow = '1.5.2';
+        const charIndex = 2;
+
+        expect(getNumberNeighbors({ line, charIndex, lineBelow })).toEqual([5]);
+    });
+
+    it('returns entire south number with southwest', () => {
+        const line      = '..*..';
+        const lineBelow = '435..';
+        const charIndex = 2;
+
+        expect(getNumberNeighbors({ line, charIndex, lineBelow })).toEqual([435]);
+    });
+
+    it('returns entire south number with southeast', () => {
+        const line      = '..*..';
+        const lineBelow = '..543...123';
+        const charIndex = 2;
+
+        expect(getNumberNeighbors({ line, charIndex, lineBelow })).toEqual([543]);
+    });
+
+    it('returns entire south west numbers', () => {
+        const line      = '..*..';
+        const lineBelow = '17...';
+        const charIndex = 2;
+
+        expect(getNumberNeighbors({ line, charIndex, lineBelow })).toEqual([17]);
+    });
+
+    it('returns entire south east numbers', () => {
+        const line      = '..*..';
+        const lineBelow = '9..38';
+        const charIndex = 2;
+
+        expect(getNumberNeighbors({ line, charIndex, lineBelow })).toEqual([38]);
+    });
+
     it("returns entire east numbers", () => {
         const line = '*38';
         const charIndex = 0;
@@ -283,7 +122,112 @@ fdescribe('getNumberNeighbors', () => {
     });
 });
 
-const example = [
+describe('partOne', () => {
+    it('returns 0 given no numbers', () => {
+        const input = [
+            '...',
+            '...',
+            '...'
+        ];
+        expect(partOne(input)).toBe(0);
+    });
+
+    it('returns 0 given no symbols', () => {
+        const input = [
+            '1..',
+            '.2.',
+            '..3'
+        ];
+        expect(partOne(input)).toBe(0);
+    });
+
+    it('returns 1 given no only 1 has a symbol neighbor', () => {
+        const input = [
+            '1*.',
+            '...',
+            '..3'
+        ];
+        expect(partOne(input)).toBe(1);
+    });
+
+    it('returns all numbers even when there are dupes', () => {
+        const input = [
+            '38.38',
+            '..*..',
+            '..38..'
+        ];
+        expect(partOne(input)).toBe(114);
+    });
+
+    it('returns 123 given just 123 and a symbol before', () => {
+        const input = ['*123'];
+        expect(partOne(input)).toBe(123);
+    });
+
+    it('returns 123 given just 123 and a symbol after', () => {
+        const input = ['123*'];
+        expect(partOne(input)).toBe(123);
+    });
+
+    it('returns 4361 given their example input', () => {
+        expect(partOne(partOneExample)).toBe(4361);
+    });
+
+    it('returns 560670 given their input', () => {
+        expect(partOne(input)).toBe(560670);
+    });
+});
+
+describe('partTwo', () => {
+    it('returns 0 given no numbers', () => {
+        const input = [
+            '...',
+            '...',
+            '...'
+        ];
+        expect(partTwo(input)).toBe(0);
+    });
+
+    it('returns 0 given no symbols', () => {
+        const input = [
+            '1..',
+            '.2.',
+            '..3'
+        ];
+        expect(partTwo(input)).toBe(0);
+    });
+
+    it('returns 0 given no connecting gears', () => {
+        const input = [
+            '1*.',
+        ];
+        expect(partTwo(input)).toBe(0);
+    });
+
+    it('returns ratio given a single gear ratio of east to west', () => {
+        const input = [
+            '1*2',
+        ];
+        expect(partTwo(input)).toBe(2);
+    });
+
+    it('returns ratio given a single gear ratio of north to south with multidigit numbers', () => {
+        const input = [
+            '123*2'
+        ];
+        expect(partTwo(input)).toBe(246);
+    });
+
+    it('return 467835 given their example input', () => {
+        expect(partTwo(partTwoExample)).toBe(467835);
+    });
+
+    it('returns 91622824 given their real input', () => {
+        expect(partTwo(input)).toBe(91622824);
+    });
+});
+
+const partOneExample = [
     '467..114..',
     '...*......',
     '..35..633.',
@@ -294,6 +238,19 @@ const example = [
     '......755.',
     '...$.*....',
     '.664.598..'
+];
+
+const partTwoExample = [
+    '467..114..',
+    '...*......',
+    '..35..633.',
+    '......#...',
+    '617*......',
+    '.....+.58.',
+    '..592.....',
+    '......755.',
+    '...$.*....',
+    '.664.598..',
 ];
 
 const input = [
@@ -437,4 +394,4 @@ const input = [
 '938..69.......92...521.....*390.....=237....287.......182....70..51...........*................773..914..747.....415.....*.....94..680..738.',
 '...*...........*........713..................*.........*......*./......503...118..........@643............*..316*........199.....&....*.....',
 '.341...........122.730.............890......20..570....64...22..........................................146............................479..',
-]
+];

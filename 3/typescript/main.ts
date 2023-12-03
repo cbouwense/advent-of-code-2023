@@ -21,43 +21,17 @@ type GetNeighborsParams = {
     lineAbove?: string;
     lineBelow?: string;
 };
-type GetNeighborsResult = {
-    north?: string;
-    south?: string;
-    east?: string;
-    west?: string;
-    northEast?: string;
-    northWest?: string;
-    southEast?: string;
-    southWest?: string;
+
+export const getNumberNeighbors = (params: GetNeighborsParams): number[] => {
+    return getNeighbors(params).map(Number);
 }
 
-export const getNeighbors = ({
+const getNeighbors = ({
     line,
     charIndex,
     lineAbove,
     lineBelow
-}: GetNeighborsParams): GetNeighborsResult => {
-    if (charIndex >= line.length) return {};
-
-    return {
-        north: lineAbove?.[charIndex],
-        south: lineBelow?.[charIndex],
-        east: line[charIndex + 1],
-        west: line[charIndex - 1],
-        northEast: lineAbove?.[charIndex + 1],
-        northWest: lineAbove?.[charIndex - 1],
-        southEast: lineBelow?.[charIndex + 1],
-        southWest: lineBelow?.[charIndex - 1]
-    };
-}
-
-export const getNumberNeighbors = ({
-    line,
-    charIndex,
-    lineAbove,
-    lineBelow
-}: GetNeighborsParams): number[] => {
+}: GetNeighborsParams): string[] => {
     const result = [];
 
     // Get north number (skip northeast and northwest if this happens).
@@ -79,7 +53,7 @@ export const getNumberNeighbors = ({
             northNumberStr += lineAbove[northIndex + 1];
             northIndex++;
         }
-        if (northNumberStr !== '') result.push(Number(northNumberStr));
+        if (northNumberStr !== '') result.push(northNumberStr);
     } else {
         // Get northwest number
         let northwestNumberStr = '';
@@ -88,7 +62,7 @@ export const getNumberNeighbors = ({
             northwestNumberStr = lineAbove?.[northwestIndex - 1] + northwestNumberStr;
             northwestIndex--;
         }
-        if (northwestNumberStr !== '') result.push(Number(northwestNumberStr));
+        if (northwestNumberStr !== '') result.push(northwestNumberStr);
     
         // Get northeast number
         let northeastNumberStr = '';
@@ -97,7 +71,47 @@ export const getNumberNeighbors = ({
             northeastNumberStr += lineAbove?.[northeastIndex + 1];
             northeastIndex++;
         }
-        if (northeastNumberStr !== '') result.push(Number(northeastNumberStr));
+        if (northeastNumberStr !== '') result.push(northeastNumberStr);
+    }
+
+    // Get south number (skip southeast and southwest if this happens).
+    let southNumberStr = '';
+    let southIndex = charIndex;
+    if (lineBelow !== undefined && isNum(lineBelow[southIndex])) {
+        southNumberStr = lineBelow[southIndex];
+
+        // Get southwest
+        while (isNum(lineBelow[southIndex - 1])) {
+            southNumberStr = lineBelow[southIndex - 1] + southNumberStr;
+            southIndex--;
+        }
+
+        southIndex = charIndex;
+
+        // Get southeast
+        while (isNum(lineBelow[southIndex + 1])) {
+            southNumberStr += lineBelow[southIndex + 1];
+            southIndex++;
+        }
+        if (southNumberStr !== '') result.push(southNumberStr);
+    } else {
+        // Get southwest number
+        let southwestNumberStr = '';
+        let southwestIndex = charIndex;
+        while (isNum(lineBelow?.[southwestIndex - 1])) {
+            southwestNumberStr = lineBelow?.[southwestIndex - 1] + southwestNumberStr;
+            southwestIndex--;
+        }
+        if (southwestNumberStr !== '') result.push(southwestNumberStr);
+    
+        // Get southeast number
+        let southeastNumberStr = '';
+        let southeastIndex = charIndex;
+        while (isNum(lineBelow?.[southeastIndex + 1])) {
+            southeastNumberStr += lineBelow?.[southeastIndex + 1];
+            southeastIndex++;
+        }
+        if (southeastNumberStr !== '') result.push(southeastNumberStr);
     }
 
     // Get east number
@@ -107,7 +121,7 @@ export const getNumberNeighbors = ({
         eastNumberStr += line[eastIndex + 1];
         eastIndex++;
     }
-    if (eastNumberStr !== '') result.push(Number(eastNumberStr));
+    if (eastNumberStr !== '') result.push(eastNumberStr);
 
     // Get west number
     let westNumberStr = '';
@@ -116,43 +130,30 @@ export const getNumberNeighbors = ({
         westNumberStr = line[westIndex - 1] + westNumberStr;
         westIndex--;
     }
-    if (westNumberStr !== '') result.push(Number(westNumberStr));
+    if (westNumberStr !== '') result.push(westNumberStr);
 
     return result;
 }
 
-// export const partOne = (input: string[]) => {
-//     const partList: string[] = [];
+export const partOne = (input: string[]) => {
+    let parts: number[] = [];
 
-//     for (let lineNo = 0; lineNo < input.length; lineNo++) {
-//         let partNumber = '';
-//         let includePart = false;
+    for (let lineNo = 0; lineNo < input.length; lineNo++) {
+        const line = input[lineNo];
 
-//         const line = input[lineNo];
-//         line.split('').forEach((c, i) => {
-//             const lineAbove = lineNo > 0 ? input[lineNo-1] : undefined;
-//             const lineBelow = lineNo < input.length-1 ? input[lineNo+1] : undefined;
+        line.split('').forEach((c, i) => {
+            const lineAbove = lineNo > 0 ? input[lineNo-1] : undefined;
+            const lineBelow = lineNo < input.length-1 ? input[lineNo+1] : undefined;
 
-//             if (isNum(c)) {
-//                 partNumber += c;
-//                 const symbolNeighbors = getSymbolNeighbors({
-//                     line, charIndex: i, lineAbove, lineBelow
-//                 });
-//                 if (symbolNeighbors.length > 0) {
-//                     includePart = true;
-//                 }
-//             } else if (partNumber != '') {
-//                 if (includePart) partList.push(partNumber);
-//                 partNumber = '';
-//                 includePart = false;
-//             }
-//         });
-//         if (includePart) partList.push(partNumber);
-//     };
+            if (isSymbol(c)) {
+                getNumberNeighbors({ line, lineAbove, lineBelow, charIndex: i })
+                    .forEach(n => parts.push(n))
+            }
+        });
+    }
 
-//     return partList.reduce((acc, curr) => acc += Number(curr), 0);
-// }
-export const partOne = (input: string[]) => 0;
+    return [...parts].reduce((acc, curr) => acc += curr, 0);
+};
 
 export const partTwo = (input: string[]) => {
     const gearRatios: number[] = [];
@@ -165,14 +166,9 @@ export const partTwo = (input: string[]) => {
             const lineBelow = lineNo < input.length-1 ? input[lineNo+1] : undefined;
 
             if (c === '*') {
-                const neighbors = getNeighbors({
-                    line, charIndex: i, lineAbove, lineBelow
-                });
-                if (isNum(neighbors.east) && isNum(neighbors.west)) {
-                    // Numbers can extend to the left, so get the entire thing
-                    const westNumberStr = '';
-                    
-
+                const neighbors = getNumberNeighbors({ line, charIndex: i, lineAbove, lineBelow });
+                if (neighbors.length > 1) {
+                    gearRatios.push(neighbors.reduce((acc, curr) => acc *= curr, 1));
                 }
             }
         });

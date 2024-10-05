@@ -19,6 +19,7 @@ bool is_digit(char c) {
 }
 
 int char_to_int(char c) {
+    if (c == '0') return 0;
     if (c == '1') return 1;
     if (c == '2') return 2;
     if (c == '3') return 3;
@@ -28,125 +29,174 @@ int char_to_int(char c) {
     if (c == '7') return 7;
     if (c == '8') return 8;
     if (c == '9') return 9;
+
+    return -1;
 }
 
 int main(void) {
-    int answer = 0;
+    { // Part 1
+        int answer = 0;
 
-    GupArrayString lines = gup_file_read_lines("../input.txt");
+        GupArrayString lines = gup_file_read_lines("../input.txt");
 
-    for (int i = 0; i < lines.count; i++) {
-        GupArrayChar line = gup_array_char_copy(lines.data[i]);
+        for (int i = 0; i < lines.count; i++) {
+            GupArrayChar line = gup_array_char_copy(lines.data[i]);
 
-        int first_number = 0;
-        int last_number = 0;
+            int first_number = 0;
+            int last_number = 0;
 
-        GupArrayChar first_word = gup_array_char();
-        for (int i = 0; i < line.count; i++) {
-            if (is_digit(line.data[i])) {
-                first_number = char_to_int(line.data[i]);
-                break;
-            }
+            GupArrayChar first_word = gup_array_char_create();
+            for (int i = 0; i < line.count; i++) {
+                if (is_digit(line.data[i])) {
+                    first_number = char_to_int(line.data[i]);
+                    break;
+                }
 
-            gup_array_char_append(&first_word, line.data[i]);
-            GupStringView sv = gup_sv_from_parts(first_word.data, first_word.count);
+                gup_array_char_append(&first_word, line.data[i]);
+            }
+            gup_array_char_destroy(first_word);
 
-            if (gup_sv_ends_with(sv, SV("one"))) {
-                first_number = 1;
-                break;
+            GupArrayChar last_word = gup_array_char_create();
+            for (int i = line.count-1; i >= 0; i--) {
+                if (is_digit(line.data[i])) {
+                    last_number = char_to_int(line.data[i]);
+                    break;
+                }
+                
+                gup_array_char_prepend(&last_word, line.data[i]);
             }
-            if (gup_sv_ends_with(sv, SV("two"))) {
-                first_number = 2;
-                break;
-            }
-            if (gup_sv_ends_with(sv, SV("three"))) {
-                first_number = 3;
-                break;
-            }
-            if (gup_sv_ends_with(sv, SV("four"))) {
-                first_number = 4;
-                break;
-            }
-            if (gup_sv_ends_with(sv, SV("five"))) {
-                first_number = 5;
-                break;
-            }
-            if (gup_sv_ends_with(sv, SV("six"))) {
-                first_number = 6;
-                break;
-            }
-            if (gup_sv_ends_with(sv, SV("seven"))) {
-                first_number = 7;
-                break;
-            }
-            if (gup_sv_ends_with(sv, SV("eight"))) {
-                first_number = 8;
-                break;
-            }
-            if (gup_sv_ends_with(sv, SV("nine"))) {
-                first_number = 9;
-                break;
-            }
+            gup_array_char_destroy(last_word);
+
+            int line_number = (10 * first_number) + last_number; 
+            answer += line_number;
+
+            gup_array_char_destroy(line);
         }
-        gup_array_char_free(first_word);
 
-        GupArrayChar last_word = gup_array_char();
-        for (int i = line.count-1; i >= 0; i--) {
-            if (is_digit(line.data[i])) {
-                last_number = char_to_int(line.data[i]);
-                break;
-            }
-            
-            gup_array_char_prepend(&last_word, line.data[i]);
-            GupStringView sv = gup_sv_from_parts(last_word.data, last_word.count);
+        printf("Part 1: %d\n", answer);
 
-            if (gup_sv_starts_with(sv, SV("one"))) {
-                last_number = 1;
-                break;
-            }
-            if (gup_sv_starts_with(sv, SV("two"))) {
-                last_number = 2;
-                break;
-            }
-            if (gup_sv_starts_with(sv, SV("three"))) {
-                last_number = 3;
-                break;
-            }
-            if (gup_sv_starts_with(sv, SV("four"))) {
-                last_number = 4;
-                break;
-            }
-            if (gup_sv_starts_with(sv, SV("five"))) {
-                last_number = 5;
-                break;
-            }
-            if (gup_sv_starts_with(sv, SV("six"))) {
-                last_number = 6;
-                break;
-            }
-            if (gup_sv_starts_with(sv, SV("seven"))) {
-                last_number = 7;
-                break;
-            }
-            if (gup_sv_starts_with(sv, SV("eight"))) {
-                last_number = 8;
-                break;
-            }
-            if (gup_sv_starts_with(sv, SV("nine"))) {
-                last_number = 9;
-                break;
-            }
-        }
-        gup_array_char_free(last_word);
-
-        int line_number = (10 * first_number) + last_number; 
-        answer += line_number;
-
-        gup_array_char_free(line);
+        gup_array_string_destroy(lines);
     }
 
-    printf("Answer: %d\n", answer);
+    { // Part 2
+        int answer = 0;
 
-    gup_array_string_free(lines);
+        GupArrayString lines = gup_file_read_lines("../input.txt");
+
+        for (int i = 0; i < lines.count; i++) {
+            GupArrayChar line = gup_array_char_copy(lines.data[i]);
+
+            int first_number = 0;
+            int last_number = 0;
+
+            GupArrayChar first_word = gup_array_char_create();
+            for (int i = 0; i < line.count; i++) {
+                if (is_digit(line.data[i])) {
+                    first_number = char_to_int(line.data[i]);
+                    break;
+                }
+
+                gup_array_char_append(&first_word, line.data[i]);
+                GupStringView sv = gup_sv_create_from_parts(first_word.data, first_word.count);
+
+                if (gup_sv_ends_with(sv, SV("one"))) {
+                    first_number = 1;
+                    break;
+                }
+                if (gup_sv_ends_with(sv, SV("two"))) {
+                    first_number = 2;
+                    break;
+                }
+                if (gup_sv_ends_with(sv, SV("three"))) {
+                    first_number = 3;
+                    break;
+                }
+                if (gup_sv_ends_with(sv, SV("four"))) {
+                    first_number = 4;
+                    break;
+                }
+                if (gup_sv_ends_with(sv, SV("five"))) {
+                    first_number = 5;
+                    break;
+                }
+                if (gup_sv_ends_with(sv, SV("six"))) {
+                    first_number = 6;
+                    break;
+                }
+                if (gup_sv_ends_with(sv, SV("seven"))) {
+                    first_number = 7;
+                    break;
+                }
+                if (gup_sv_ends_with(sv, SV("eight"))) {
+                    first_number = 8;
+                    break;
+                }
+                if (gup_sv_ends_with(sv, SV("nine"))) {
+                    first_number = 9;
+                    break;
+                }
+            }
+            gup_array_char_destroy(first_word);
+
+            GupArrayChar last_word = gup_array_char_create();
+            for (int i = line.count-1; i >= 0; i--) {
+                if (is_digit(line.data[i])) {
+                    last_number = char_to_int(line.data[i]);
+                    break;
+                }
+                
+                gup_array_char_prepend(&last_word, line.data[i]);
+                GupStringView sv = gup_sv_create_from_parts(last_word.data, last_word.count);
+
+                if (gup_sv_starts_with(sv, SV("one"))) {
+                    last_number = 1;
+                    break;
+                }
+                if (gup_sv_starts_with(sv, SV("two"))) {
+                    last_number = 2;
+                    break;
+                }
+                if (gup_sv_starts_with(sv, SV("three"))) {
+                    last_number = 3;
+                    break;
+                }
+                if (gup_sv_starts_with(sv, SV("four"))) {
+                    last_number = 4;
+                    break;
+                }
+                if (gup_sv_starts_with(sv, SV("five"))) {
+                    last_number = 5;
+                    break;
+                }
+                if (gup_sv_starts_with(sv, SV("six"))) {
+                    last_number = 6;
+                    break;
+                }
+                if (gup_sv_starts_with(sv, SV("seven"))) {
+                    last_number = 7;
+                    break;
+                }
+                if (gup_sv_starts_with(sv, SV("eight"))) {
+                    last_number = 8;
+                    break;
+                }
+                if (gup_sv_starts_with(sv, SV("nine"))) {
+                    last_number = 9;
+                    break;
+                }
+            }
+            gup_array_char_destroy(last_word);
+
+            int line_number = (10 * first_number) + last_number; 
+            answer += line_number;
+
+            gup_array_char_destroy(line);
+        }
+
+        printf("Part 2: %d\n", answer);
+
+        gup_array_string_destroy(lines);
+    }
+
     return 0;
 }

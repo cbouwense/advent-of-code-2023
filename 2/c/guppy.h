@@ -363,7 +363,6 @@ void  gup_cstr_print(const char *cstr);
 
 // Miscellaneous
 double gup_operation_seconds(void (*fn)());
-double gup_operation_seconds(void (*fn)());
 #define gup_array_len(a) sizeof(a)/sizeof(a[0]) 
 #define gup_defer_return(r) do { result = (r); goto defer; } while (0)
 #define GUP_RUN if (true)
@@ -3255,7 +3254,6 @@ void gup_cstr_copy_n_arena(GupArena *a, char *to, const char *from, int n) {
 
 // Miscellaneous -----------------------------------------------------------------------------------
 
-// TODO: DRY this up?
 double gup_operation_seconds(void (*fn)()) {
     clock_t start, end;
     double cpu_seconds_used;
@@ -3268,18 +3266,9 @@ double gup_operation_seconds(void (*fn)()) {
     
     cpu_seconds_used = ((double) (end - start)) / CLOCKS_PER_SEC;
 
-    #ifdef GUPPY_VERBOSE
     printf("The operation took %f seconds to execute.\n", cpu_seconds_used);
-    #endif // GUPPY_VERBOSE
 
     return cpu_seconds_used;
-}
-
-double gup_operation_seconds_verbose(void (*fn)()) {
-    double result = gup_operation_seconds(fn);
-    printf("The operation took %f seconds to execute.\n", result);
-
-    return result;
 }
 
 // -1 means the character was not an int.

@@ -19,9 +19,10 @@ int main(void) {
 
         GupArrayString lines = gup_file_read_lines_arena(&a, "../input.txt");
     
-        for (int i = 0; i < lines.count; i ++) {
+        for (int i = 0; i < lines.count; i++) {
             // ["Game 1738", " 1 blue, 2 green; 3 green, 4 blue, 1 red; 1 green, 1 blue"]
             GupArrayString tokens = gup_string_split_arena(&a, lines.data[i], ':');
+
             // [" 1 blue, 2 green", " 3 green, 4 blue, 1 red", " 1 green, 1 blue"]
             GupArrayString rounds = gup_string_split_arena(&a, tokens.data[1], ';');
             // ["1 blue, 2 green", "3 green, 4 blue, 1 red", "1 green, 1 blue"]
@@ -56,7 +57,8 @@ int main(void) {
                 }
             }
 
-            if (max_red <= max_possible_red && max_green <= max_possible_green && max_blue <= max_possible_blue) {
+            bool game_is_impossible = max_red <= max_possible_red && max_green <= max_possible_green && max_blue <= max_possible_blue;
+            if (game_is_impossible) {
                 // "Game 1738" -> "1738"
                 GupString game_id_str = gup_string_filter_arena(&a, tokens.data[0], is_digit);
 
@@ -66,8 +68,6 @@ int main(void) {
 
                 part_one_answer += game_id;
             }
-
-            // gup_array_string_print(tokens);
         }
 
         printf("answer: %d\n", part_one_answer);
